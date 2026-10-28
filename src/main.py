@@ -1,4 +1,5 @@
 import json, requests, pandas as pd
+import re
 from datetime import date, datetime
 import matplotlib.pyplot as plt
 import numpy as np
@@ -326,11 +327,14 @@ def curve_fit(df:pd.DataFrame)->None:
             )
     T0, A, phi = parameters
     errors = np.sqrt(np.diag(covariance))
-
-    print(f"T0 = {T0:.2f} ± {errors[0]:.2f} °C")
-    print(f"A  = {A:.2f} ± {errors[1]:.2f} °C")
-    print(f"phi = {phi:.2f} ± {errors[2]:.2f} radians")
-    
+    rezultat = {
+            "T0": T0,
+            "A": A,
+            "phi": phi,
+            }
+    out_file = open("rezult.json", "w")
+    json.dump(rezultat, out_file, indent = 6)
+    out_file.close()
     fitted_temperature = temp_model(t, T0, A, phi)
     
     plt.figure(figsize=(12, 5))
@@ -407,7 +411,7 @@ def amplitude_latitude_brightness_relationship(
     Z = scipy.interpolate.griddata(
                 points = (x, y),
                 values = z,
-                xi = (X, Y),
+                xi = (X, Y)
                 method = "linear"
             )
     
